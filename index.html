@@ -144,58 +144,82 @@
     margin-bottom: 18px;
   }
 
+  /* ── Stepper UI ── */
   .slider-group { margin-bottom: 22px; }
-  .slider-group:last-child { margin-bottom: 0; }
-  .slider-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 8px;
-  }
   .slider-name { font-family: 'DM Mono', monospace; font-size: .78rem; color: var(--muted2); }
-  .slider-val {
+  
+  .stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px;
+    margin-top: 10px;
+  }
+  
+  .step-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--text);
+    width: 38px; height: 38px;
+    border-radius: 6px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+    font-family: inherit;
+  }
+  
+  .step-btn:hover:not(:disabled) {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(200,169,110,.1);
+  }
+  
+  .step-btn.k-btn:hover:not(:disabled) {
+    border-color: var(--teal);
+    color: var(--teal);
+    background: rgba(95,184,201,.1);
+  }
+
+  .step-btn:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+  }
+
+  .step-val {
     font-family: 'DM Mono', monospace;
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 500;
     color: var(--gold);
-    transition: color .2s;
-    line-height: 1;
+    min-width: 40px;
+    text-align: center;
   }
-  .slider-val.k-col { color: var(--teal); }
+  
+  .step-val.k-col { color: var(--teal); }
 
-  input[type=range] {
-    -webkit-appearance: none; appearance: none;
-    width: 100%; height: 3px;
-    background: var(--surface3);
-    border-radius: 3px;
-    outline: none; cursor: pointer;
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    background: var(--gold);
-    box-shadow: 0 0 14px rgba(200,169,110,.55);
+  .confirm-btn {
+    width: 100%;
+    margin-top: 6px;
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(200,169,110,0.1), rgba(95,184,201,0.1));
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .95rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: transform .15s, box-shadow .15s;
+    transition: all .2s;
   }
-  input[type=range]::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-    box-shadow: 0 0 22px rgba(200,169,110,.75);
-  }
-  #sk::-webkit-slider-thumb {
-    background: var(--teal);
-    box-shadow: 0 0 14px rgba(95,184,201,.55);
-  }
-  #sk::-webkit-slider-thumb:hover { box-shadow: 0 0 22px rgba(95,184,201,.75); }
-  .slider-ends {
-    display: flex;
-    justify-content: space-between;
-    font-family: 'DM Mono', monospace;
-    font-size: 9.5px;
-    color: var(--muted);
-    opacity: .5;
-    margin-top: 4px;
+
+  .confirm-btn:hover {
+    background: linear-gradient(135deg, rgba(200,169,110,0.2), rgba(95,184,201,0.2));
+    border-color: rgba(255,255,255,0.3);
+    color: #fff;
+    transform: translateY(-2px);
   }
 
   /* result card */
@@ -475,21 +499,23 @@
     <div class="card">
       <div class="card-label">Parameters</div>
       <div class="slider-group">
-        <div class="slider-row">
-          <span class="slider-name">n — elements in set</span>
-          <span class="slider-val" id="vn">4</span>
+        <span class="slider-name">n — elements in set</span>
+        <div class="stepper">
+          <button class="step-btn" id="dec-n">−</button>
+          <div class="step-val" id="val-n">4</div>
+          <button class="step-btn" id="inc-n">+</button>
         </div>
-        <input type="range" id="sn" min="0" max="8" value="4">
-        <div class="slider-ends"><span>0</span><span>8</span></div>
       </div>
       <div class="slider-group">
-        <div class="slider-row">
-          <span class="slider-name">k — number of subsets</span>
-          <span class="slider-val k-col" id="vk">2</span>
+        <span class="slider-name">k — number of subsets</span>
+        <div class="stepper">
+          <button class="step-btn k-btn" id="dec-k">−</button>
+          <div class="step-val k-col" id="val-k">2</div>
+          <button class="step-btn k-btn" id="inc-k">+</button>
         </div>
-        <input type="range" id="sk" min="0" max="8" value="2">
-        <div class="slider-ends"><span>0</span><span>8</span></div>
       </div>
+      
+      <button class="confirm-btn" id="btn-calc">Calculate & Update</button>
     </div>
 
     <div class="card result-card" id="res-card">
@@ -499,7 +525,6 @@
     </div>
   </div>
 
-  <!-- Partition groups -->
   <div class="partition-section">
     <div class="section-head">
       <span class="section-title">All Partitions</span>
@@ -509,7 +534,6 @@
     <div class="partition-grid" id="part-grid"></div>
   </div>
 
-  <!-- Triangle -->
   <div class="table-section">
     <div class="section-head">
       <span class="section-title">Stirling Triangle S(n, k)</span>
@@ -524,7 +548,6 @@
     </div>
   </div>
 
-  <!-- Steps -->
   <div class="steps-section">
     <div class="section-head">
       <span class="section-title">Computation Trace</span>
@@ -536,6 +559,7 @@
 </div>
 <script>
 // ── Stirling table ──────────────────────────────────
+// Max kept at 8 to prevent browser freezing from rendering huge sets
 const MAX = 8;
 const S = Array.from({length:MAX+1}, ()=>new Array(MAX+1).fill(0));
 S[0][0] = 1;
@@ -589,10 +613,6 @@ function generatePartitions(n, k) {
 })();
 
 // ── DOM ─────────────────────────────────────────────
-const slN=document.getElementById('sn');
-const slK=document.getElementById('sk');
-const vn=document.getElementById('vn');
-const vk=document.getElementById('vk');
 const resNum=document.getElementById('res-num');
 const resNot=document.getElementById('res-not');
 const resDesc=document.getElementById('res-desc');
@@ -602,7 +622,26 @@ const partCount=document.getElementById('part-count');
 const stepsEl=document.getElementById('steps');
 const PC=['pc0','pc1','pc2','pc3','pc4','pc5','pc6','pc7'];
 const MAX_SHOW=60;
+
+// Inputs 
+const btnDecN=document.getElementById('dec-n'), btnIncN=document.getElementById('inc-n');
+const btnDecK=document.getElementById('dec-k'), btnIncK=document.getElementById('inc-k');
+const valN=document.getElementById('val-n'), valK=document.getElementById('val-k');
+const btnCalc=document.getElementById('btn-calc');
+
+let draftN = 4, draftK = 2;
 let lastN=-1,lastK=-1,popT=null;
+
+// ── Update Steppers UI ───────────────────────────────
+function updateDraftUI() {
+  valN.textContent = draftN;
+  valK.textContent = draftK;
+  
+  btnDecN.disabled = draftN <= 0;
+  btnIncN.disabled = draftN >= MAX;
+  btnDecK.disabled = draftK <= 0;
+  btnIncK.disabled = draftK >= MAX;
+}
 
 // ── Highlight table ──────────────────────────────────
 function hilite(n,k){
@@ -686,10 +725,8 @@ function renderSteps(n,k){
   },i*70));
 }
 
-// ── Main update ──────────────────────────────────────
-function update(){
-  const n=+slN.value, k=+slK.value;
-  vn.textContent=n; vk.textContent=k;
+// ── Core Execute ──────────────────────────────────────
+function executeCalculation(n, k){
   const val=S[n][k];
   resNot.textContent=`S(${n},${k})`;
   resNum.textContent=val.toLocaleString();
@@ -707,11 +744,26 @@ function update(){
   renderSteps(n,k);
 }
 
-function clickCell(n,k){ slN.value=n; slK.value=k; update(); }
+// ── Events ───────────────────────────────────────────
+btnDecN.addEventListener('click', () => { if(draftN>0){ draftN--; updateDraftUI(); } });
+btnIncN.addEventListener('click', () => { if(draftN<MAX){ draftN++; updateDraftUI(); } });
+btnDecK.addEventListener('click', () => { if(draftK>0){ draftK--; updateDraftUI(); } });
+btnIncK.addEventListener('click', () => { if(draftK<MAX){ draftK++; updateDraftUI(); } });
 
-slN.addEventListener('input',update);
-slK.addEventListener('input',update);
-update();
+btnCalc.addEventListener('click', () => {
+  executeCalculation(draftN, draftK);
+});
+
+function clickCell(n, k){ 
+  draftN = n; 
+  draftK = k; 
+  updateDraftUI(); 
+  executeCalculation(draftN, draftK); 
+}
+
+// ── Init ─────────────────────────────────────────────
+updateDraftUI();
+executeCalculation(draftN, draftK);
 </script>
 </body>
 </html>
